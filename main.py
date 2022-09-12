@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 import pyperclip
+import json
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 import random
 
@@ -52,6 +53,11 @@ def save_password():
     website = website_input.get()
     email = email_input.get()
     password = password_input.get()
+    new_data = {
+        website: {
+            "email": email,
+            "password": password,
+        }}
 
     if len(website) == 0 or len(password) == 0:
         messagebox.showerror(title="Insufficient website and/or password length",
@@ -60,10 +66,17 @@ def save_password():
         is_ok = messagebox.askokcancel(
             title=website, message=f"There are the details entered:\nEmail: {email}\nPassword: {password}\nClick Ok to confirm your entry.")
         if is_ok:
-            with open("saved_passwords.txt", "a") as f:
-                new_entry = f"{website} | {email} | {password}\n"
-                f.write(new_entry)
-
+            try:
+                with open("saved_passwords.json", "r") as data_file:
+                    data = json.load(data_file)
+            except FileNotFoundError:
+                with open("saved_passwords.json", "w") as data_file:
+                    data = json.dump(new_data, data_file, indent=4)
+            else:
+                data.update(new_data)
+                with open("saved_passwords.json", "w") as data_file:
+                    json.dump(new_data, data_file, indent=4)
+            finally:
                 messagebox.showinfo(title="Success",
                                     message=f"Entry for {website} successfully saved.")
 
@@ -83,13 +96,13 @@ canvas.create_image(100, 100, image=app_image)
 canvas.grid(row=0, column=1)
 
 # --------------LABELS--------------------#
-website_label = Label(text="Website:", bg="white", width=35)
+website_label = Label(text="Website:", bg="white")
 website_label.grid(row=1, column=0)
 
-email_label = Label(text="Email/Username:", bg="white", width=35)
+email_label = Label(text="Email/Username:", bg="white")
 email_label.grid(row=2, column=0)
 
-password_label = Label(text="Password:", bg="white", width=21)
+password_label = Label(text="Password:", bg="white")
 password_label.grid(row=3, column=0)
 
 # --------------INPUTS--------------------#
@@ -108,8 +121,9 @@ password_input.grid(row=3, column=1)
 add_button = Button(text="Add", width=36, command=save_password)
 add_button.grid(row=4, column=1, columnspan=2)
 
-generate_button = Button(text="Generate Password", command=password_gen)
-generate_button.grid(row=3, column=2)
+generate_button = Button(text="Generate Password",
+                         width=20, command=password_gen)
+generate_button.grid(row=3, column=2, columnspan=2)
 
 
 window.mainloop()
