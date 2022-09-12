@@ -132,9 +132,9 @@ password_label = Label(text="Password:", bg="white")
 password_label.grid(row=3, column=0)
 
 # --------------INPUTS--------------------#
-website_input = Entry(width=25)
+website_input = Entry(width=21)
 website_input.focus()
-website_input.grid(row=1, column=1, columnspan=2)
+website_input.grid(row=1, column=1)
 
 email_input = Entry(width=35)
 email_input.insert(0, "email@server.com")
@@ -148,10 +148,10 @@ add_button = Button(text="Add", width=36, command=save_password)
 add_button.grid(row=4, column=1, columnspan=2)
 
 generate_button = Button(text="Generate Password",
-                         width=15, command=password_gen)
+                         width=13, command=password_gen)
 generate_button.grid(row=3, column=2, columnspan=2)
 
-search_button = Button(text="Search", width=15, command=search_password)
+search_button = Button(text="Search", width=13, command=search_password)
 search_button.grid(row=1, column=2, columnspan=2)
 
 
