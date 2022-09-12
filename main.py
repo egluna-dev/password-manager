@@ -98,10 +98,11 @@ def search_password():
             website_found = False
             for website in data:
                 if search_query.lower() == website.lower():
-                    email = data[str(website)]["email"]
-                    password = data[str(website)]["password"]
+                    email = data[website]["email"]
+                    password = data[website]["password"]
+                    pyperclip.copy(password)
                     messagebox.showinfo(
-                        title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.")
+                        title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.\nPassword saved to clipboard!")
                     website_found = True
                     break
                 else:
