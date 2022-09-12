@@ -84,6 +84,32 @@ def save_password():
                 email_input.delete(0, "end")
                 password_input.delete(0, "end")
 
+# ---------------------------- SEARCH FUNCTION ------------------------------- #
+
+
+def search_password():
+    search_query = website_input.get()
+    if len(search_query) == 0:
+        messagebox.showerror(title="Search Error",
+                             message="Search query cannot be empty.")
+    else:
+        with open("saved_passwords.json", "r") as data_file:
+            data = json.load(data_file)
+            website_found = False
+            for website in data:
+                if search_query.lower() == website.lower():
+                    email = data[str(website)]["email"]
+                    password = data[str(website)]["password"]
+                    messagebox.showinfo(
+                        title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.")
+                    website_found = True
+                    break
+                else:
+                    pass
+            if not website_found:
+                messagebox.showinfo(title="Not Found",
+                                    message="So such entry found.")
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -106,7 +132,7 @@ password_label = Label(text="Password:", bg="white")
 password_label.grid(row=3, column=0)
 
 # --------------INPUTS--------------------#
-website_input = Entry(width=35)
+website_input = Entry(width=25)
 website_input.focus()
 website_input.grid(row=1, column=1, columnspan=2)
 
@@ -122,8 +148,11 @@ add_button = Button(text="Add", width=36, command=save_password)
 add_button.grid(row=4, column=1, columnspan=2)
 
 generate_button = Button(text="Generate Password",
-                         width=20, command=password_gen)
+                         width=15, command=password_gen)
 generate_button.grid(row=3, column=2, columnspan=2)
+
+search_button = Button(text="Search", width=15, command=search_password)
+search_button.grid(row=1, column=2, columnspan=2)
 
 
 window.mainloop()
