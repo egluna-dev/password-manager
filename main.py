@@ -5,13 +5,9 @@ import json
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 import random
 
-letters = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
-    'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
-    'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-]
-numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+letters = [chr(num) for num in range(97, 123)] + [chr(num)
+                                                  for num in range(65, 91)]
+numbers = [str(num) for num in range(10)]
 symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
 
 
@@ -61,7 +57,7 @@ def save_password():
 
     if len(website) == 0 or len(password) == 0:
         messagebox.showerror(title="Insufficient website and/or password length",
-                             message="Website and/or password info shold not be blank")
+                             message="Website and/or password info should not be blank")
     else:
         is_ok = messagebox.askokcancel(
             title=website, message=f"There are the details entered:\nEmail: {email}\nPassword: {password}\nClick Ok to confirm your entry.")
@@ -71,11 +67,11 @@ def save_password():
                     data = json.load(data_file)
             except FileNotFoundError:
                 with open("saved_passwords.json", "w") as data_file:
-                    data = json.dump(new_data, data_file, indent=4)
+                    json.dump(new_data, data_file, indent=4)
             else:
                 data.update(new_data)
                 with open("saved_passwords.json", "w") as data_file:
-                    json.dump(new_data, data_file, indent=4)
+                    json.dump(data, data_file, indent=4)
             finally:
                 messagebox.showinfo(title="Success",
                                     message=f"Entry for {website} successfully saved.")
