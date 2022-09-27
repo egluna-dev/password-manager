@@ -123,11 +123,6 @@ def quick_search(query):
             messagebox.showinfo(title="Not Found",
                                 message="So such entry found.")
             return website_found
-        else:
-            return {
-                'data': data,
-                'entry_exists': True
-            }
 
 
 # ---------------------------- UI SETUP ------------------------------- #
