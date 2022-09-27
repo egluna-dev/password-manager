@@ -41,16 +41,16 @@ def password_gen(num_letters=4, num_symbols=4, num_numbers=4):
 
     generated_password = "".join(mixed_password)
 
-    password_input.insert(0, generated_password)
+    ui.password_input.insert(0, generated_password)
 
     pyperclip.copy(generated_password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_password():
-    website = website_input.get()
-    email = email_input.get()
-    password = password_input.get()
+    website = ui.website_input.get()
+    email = ui.email_input.get()
+    password = ui.password_input.get()
     new_data = {
         website: {
             "email": email,
@@ -85,9 +85,9 @@ def save_password():
                         messagebox.showinfo(title="Success",
                                             message=f"Entry for {website} successfully saved.")
 
-                        website_input.delete(0, "end")
-                        email_input.delete(0, "end")
-                        password_input.delete(0, "end")
+                        ui.website_input.delete(0, "end")
+                        ui.email_input.delete(0, "end")
+                        ui.password_input.delete(0, "end")
         else:
             messagebox.showinfo(title="Entry Remains Unchanged",
                                 message=f"The entry info for {website} has not been modified")
@@ -96,7 +96,7 @@ def save_password():
 
 
 def search_password():
-    search_query = website_input.get()
+    search_query = ui.website_input.get()
     if len(search_query) == 0:
         messagebox.showerror(title="Search Error",
                              message="Search query cannot be empty.")
@@ -131,7 +131,7 @@ def quick_search(query):
 
 
 # ---------------------------- UI SETUP ------------------------------- #
-ui_init = UserInterface(save_password, password_gen, search_password)
+ui = UserInterface(save_password, password_gen, search_password)
 # window = Tk()
 # window.title("Password Generator & Manager")
 # window.config(padx=50, pady=50, bg="white")
