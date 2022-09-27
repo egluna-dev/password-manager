@@ -33,7 +33,7 @@ def password_gen(num_letters=4, num_symbols=4, num_numbers=4):
 
     mixed_password = []
 
-    for _ in range(0, len(password_list)):
+    for _ in range(len(password_list)):
         random_index = random.randint(0, len(password_list) - 1)
         random_element = password_list[random_index]
         mixed_password.append(str(random_element))
@@ -41,16 +41,16 @@ def password_gen(num_letters=4, num_symbols=4, num_numbers=4):
 
     generated_password = "".join(mixed_password)
 
-    ui.password_input.insert(0, generated_password)
+    password_input.insert(0, generated_password)
 
     pyperclip.copy(generated_password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_password():
-    website = ui.website_input.get()
-    email = ui.email_input.get()
-    password = ui.password_input.get()
+    website = website_input.get()
+    email = email_input.get()
+    password = password_input.get()
     new_data = {
         website: {
             "email": email,
@@ -85,9 +85,9 @@ def save_password():
                         messagebox.showinfo(title="Success",
                                             message=f"Entry for {website} successfully saved.")
 
-                        ui.website_input.delete(0, "end")
-                        ui.email_input.delete(0, "end")
-                        ui.password_input.delete(0, "end")
+                        website_input.delete(0, "end")
+                        email_input.delete(0, "end")
+                        password_input.delete(0, "end")
         else:
             messagebox.showinfo(title="Entry Remains Unchanged",
                                 message=f"The entry info for {website} has not been modified")
@@ -126,48 +126,47 @@ def quick_search(query):
 
 
 # ---------------------------- UI SETUP ------------------------------- #
-ui = UserInterface(save_password, password_gen, search_password)
-# window = Tk()
-# window.title("Password Generator & Manager")
-# window.config(padx=50, pady=50, bg="white")
+window = Tk()
+window.title("Password Generator & Manager")
+window.config(padx=50, pady=50, bg="white")
 
-# canvas = Canvas(width=200, height=200, bg="white", highlightthickness=0)
-# app_image = PhotoImage(file="logo.png")
-# canvas.create_image(100, 100, image=app_image)
-# canvas.grid(row=0, column=1)
+canvas = Canvas(width=200, height=200, bg="white", highlightthickness=0)
+app_image = PhotoImage(file="logo.png")
+canvas.create_image(100, 100, image=app_image)
+canvas.grid(row=0, column=1)
 
-# # --------------LABELS--------------------#
-# website_label = Label(text="Website:", bg="white")
-# website_label.grid(row=1, column=0)
+# --------------LABELS--------------------#
+website_label = Label(text="Website:", bg="white")
+website_label.grid(row=1, column=0)
 
-# email_label = Label(text="Email/Username:", bg="white")
-# email_label.grid(row=2, column=0)
+email_label = Label(text="Email/Username:", bg="white")
+email_label.grid(row=2, column=0)
 
-# password_label = Label(text="Password:", bg="white")
-# password_label.grid(row=3, column=0)
+password_label = Label(text="Password:", bg="white")
+password_label.grid(row=3, column=0)
 
-# # --------------INPUTS--------------------#
-# website_input = Entry(width=21)
-# website_input.focus()
-# website_input.grid(row=1, column=1)
+# --------------INPUTS--------------------#
+website_input = Entry(width=21)
+website_input.focus()
+website_input.grid(row=1, column=1)
 
-# email_input = Entry(width=35)
-# email_input.insert(0, "email@server.com")
-# email_input.grid(row=2, column=1, columnspan=2)
+email_input = Entry(width=35)
+email_input.insert(0, "email@server.com")
+email_input.grid(row=2, column=1, columnspan=2)
 
-# password_input = Entry(width=21)
-# password_input.grid(row=3, column=1)
+password_input = Entry(width=21)
+password_input.grid(row=3, column=1)
 
-# # --------------BUTTONS--------------------#
-# add_button = Button(text="Add", width=36, command=save_password)
-# add_button.grid(row=4, column=1, columnspan=2)
+# --------------BUTTONS--------------------#
+add_button = Button(text="Add", width=36, command=save_password)
+add_button.grid(row=4, column=1, columnspan=2)
 
-# generate_button = Button(text="Generate Password",
-#                          width=13, command=password_gen)
-# generate_button.grid(row=3, column=2, columnspan=2)
+generate_button = Button(text="Generate Password",
+                         width=13, command=password_gen)
+generate_button.grid(row=3, column=2, columnspan=2)
 
-# search_button = Button(text="Search", width=13, command=search_password)
-# search_button.grid(row=1, column=2, columnspan=2)
+search_button = Button(text="Search", width=13, command=search_password)
+search_button.grid(row=1, column=2, columnspan=2)
 
 
-# window.mainloop()
+window.mainloop()
