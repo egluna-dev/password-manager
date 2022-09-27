@@ -89,23 +89,27 @@ def search_password():
         messagebox.showerror(title="Search Error",
                              message="Search query cannot be empty.")
     else:
-        with open("saved_passwords.json", "r") as data_file:
-            data = json.load(data_file)
-            website_found = False
-            for website in data:
-                if search_query.lower() == website.lower():
-                    email = data[website]["email"]
-                    password = data[website]["password"]
-                    pyperclip.copy(password)
-                    messagebox.showinfo(
-                        title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.\nPassword saved to clipboard!")
-                    website_found = True
-                    break
-                else:
-                    pass
-            if not website_found:
-                messagebox.showinfo(title="Not Found",
-                                    message="So such entry found.")
+        quick_search(search_query)
+
+
+def quick_search(query):
+    with open("saved_passwords.json", "r") as data_file:
+        data = json.load(data_file)
+        website_found = False
+        for website in data:
+            if query.lower() == website.lower():
+                email = data[website]["email"]
+                password = data[website]["password"]
+                pyperclip.copy(password)
+                messagebox.showinfo(
+                    title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.\nPassword saved to clipboard!")
+                website_found = True
+                break
+            else:
+                pass
+        if not website_found:
+            messagebox.showinfo(title="Not Found",
+                                message="So such entry found.")
 
 
 # ---------------------------- UI SETUP ------------------------------- #
