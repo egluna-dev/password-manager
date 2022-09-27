@@ -3,7 +3,6 @@ from tkinter import messagebox
 import pyperclip
 import json
 import random
-from UserInterface import UserInterface
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 
@@ -47,7 +46,7 @@ def password_gen(num_letters=4, num_symbols=4, num_numbers=4):
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
-def save_password():
+def create_password():
     website = website_input.get()
     email = email_input.get()
     password = password_input.get()
@@ -57,72 +56,97 @@ def save_password():
             "password": password,
         }}
 
-    entry_exists = quick_search(query=website)["entry_exists"]
-    if entry_exists:
+    def save_password():
+        try:
+            with open("saved_passwords.json", "r") as data_file:
+                data = json.load(data_file)
+        except FileNotFoundError:
+            with open("saved_passwords.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            data.update(new_data)
+            with open("saved_passwords.json", "w") as data_file:
+                json.dump(data, data_file, indent=4)
+        finally:
+            messagebox.showinfo(title="Success",
+                                message=f"Entry for {website} successfully saved.")
+
+            website_input.delete(0, "end")
+            email_input.delete(0, "end")
+            password_input.delete(0, "end")
+
+    entry_exists = quick_search(website_query=website)
+    if not entry_exists:
+        if len(website) == 0 or len(password) == 0:
+            messagebox.showerror(title="Insufficient website and/or password length",
+                                 message="Website and/or password info should not be blank")
+        else:
+            is_ok = messagebox.askokcancel(
+                title=website, message=f"There are the details entered:\nEmail: {email}\nPassword: {password}\nClick Ok to confirm your entry.")
+            if is_ok:
+                save_password()
+
+    else:
         messagebox.showinfo(title="Entry Found",
                             message=f"Entry for {website} already exists.")
         confirm_rewrite = messagebox.askyesnocancel(
             title="Rewrite entry", message=f"Would you like to rewrite the entry for {website}?\n")
         if confirm_rewrite:
-            if len(website) == 0 or len(password) == 0:
-                messagebox.showerror(title="Insufficient website and/or password length",
-                                     message="Website and/or password info should not be blank")
-            else:
-                is_ok = messagebox.askokcancel(
-                    title=website, message=f"There are the details entered:\nEmail: {email}\nPassword: {password}\nClick Ok to confirm your entry.")
-                if is_ok:
-                    try:
-                        with open("saved_passwords.json", "r") as data_file:
-                            data = json.load(data_file)
-                    except FileNotFoundError:
-                        with open("saved_passwords.json", "w") as data_file:
-                            json.dump(new_data, data_file, indent=4)
-                    else:
-                        data.update(new_data)
-                        with open("saved_passwords.json", "w") as data_file:
-                            json.dump(data, data_file, indent=4)
-                    finally:
-                        messagebox.showinfo(title="Success",
-                                            message=f"Entry for {website} successfully saved.")
-
-                        website_input.delete(0, "end")
-                        email_input.delete(0, "end")
-                        password_input.delete(0, "end")
+            save_password()
         else:
             messagebox.showinfo(title="Entry Remains Unchanged",
                                 message=f"The entry info for {website} has not been modified")
+
 
 # ---------------------------- SEARCH FUNCTION ------------------------------- #
 
 
 def search_password():
-    search_query = ui.website_input.get()
+    search_query = website_input.get()
     if len(search_query) == 0:
         messagebox.showerror(title="Search Error",
                              message="Search query cannot be empty.")
     else:
-        quick_search(search_query)
+        with open("saved_passwords.json", "r") as data_file:
+            data = json.load(data_file)
+            website_found = False
+            for website in data:
+                if search_query.lower() == website.lower():
+                    email = data[website]["email"]
+                    password = data[website]["password"]
+                    pyperclip.copy(password)
+                    messagebox.showinfo(
+                        title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.\nPassword saved to clipboard!")
+                    website_found = True
+                    break
+                else:
+                    pass
+            if not website_found:
+                messagebox.showinfo(title="Not Found",
+                                    message="So such entry found.")
+                return website_found
 
 
-def quick_search(query):
+def quick_search(website_query):
     with open("saved_passwords.json", "r") as data_file:
         data = json.load(data_file)
-        website_found = False
-        for website in data:
-            if query.lower() == website.lower():
-                email = data[website]["email"]
-                password = data[website]["password"]
-                pyperclip.copy(password)
-                messagebox.showinfo(
-                    title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.\nPassword saved to clipboard!")
-                website_found = True
-                break
-            else:
-                pass
-        if not website_found:
-            messagebox.showinfo(title="Not Found",
-                                message="So such entry found.")
-            return website_found
+        if website_query in data:
+            return True
+        # for website in data:
+        #     if query.lower() == website.lower():
+        #         email = data[website]["email"]
+        #         password = data[website]["password"]
+        #         pyperclip.copy(password)
+        #         messagebox.showinfo(
+        #             title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.\nPassword saved to clipboard!")
+        #         website_found = True
+        #         break
+        #     else:
+        #         pass
+        # if not website_found:
+        #     messagebox.showinfo(title="Not Found",
+        #                         message="So such entry found.")
+        #     return website_found
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -158,7 +182,7 @@ password_input = Entry(width=21)
 password_input.grid(row=3, column=1)
 
 # --------------BUTTONS--------------------#
-add_button = Button(text="Add", width=36, command=save_password)
+add_button = Button(text="Add", width=36, command=create_password)
 add_button.grid(row=4, column=1, columnspan=2)
 
 generate_button = Button(text="Generate Password",
