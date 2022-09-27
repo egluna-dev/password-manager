@@ -77,9 +77,9 @@ def create_password():
 
     entry_exists = quick_search(website_query=website)
     if not entry_exists:
-        if len(website) == 0 or len(password) == 0:
+        if len(website) == 0 or len(password) < 8:
             messagebox.showerror(title="Insufficient website and/or password length",
-                                 message="Website and/or password info should not be blank")
+                                 message="Website and/or password info should not be blank and\npassword must be at least eight characters long.")
         else:
             is_ok = messagebox.askokcancel(
                 title=website, message=f"There are the details entered:\nEmail: {email}\nPassword: {password}\nClick Ok to confirm your entry.")
