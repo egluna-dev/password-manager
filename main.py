@@ -2,13 +2,15 @@ from tkinter import *
 from tkinter import messagebox
 import pyperclip
 import json
-# ---------------------------- PASSWORD GENERATOR ------------------------------- #
 import random
+from UserInterface import UserInterface
+# ---------------------------- PASSWORD GENERATOR ------------------------------- #
+
 
 letters = [chr(num) for num in range(97, 123)] + [chr(num)
                                                   for num in range(65, 91)]
 numbers = [str(num) for num in range(10)]
-symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
+symbols = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ")", "+"]
 
 
 def password_gen(num_letters=4, num_symbols=4, num_numbers=4):
@@ -55,30 +57,40 @@ def save_password():
             "password": password,
         }}
 
-    if len(website) == 0 or len(password) == 0:
-        messagebox.showerror(title="Insufficient website and/or password length",
-                             message="Website and/or password info should not be blank")
-    else:
-        is_ok = messagebox.askokcancel(
-            title=website, message=f"There are the details entered:\nEmail: {email}\nPassword: {password}\nClick Ok to confirm your entry.")
-        if is_ok:
-            try:
-                with open("saved_passwords.json", "r") as data_file:
-                    data = json.load(data_file)
-            except FileNotFoundError:
-                with open("saved_passwords.json", "w") as data_file:
-                    json.dump(new_data, data_file, indent=4)
+    entry_exists = quick_search(query=website)["entry_exists"]
+    if entry_exists:
+        messagebox.showinfo(title="Entry Found",
+                            message=f"Entry for {website} already exists.")
+        confirm_rewrite = messagebox.askyesnocancel(
+            title="Rewrite entry", message=f"Would you like to rewrite the entry for {website}?\n")
+        if confirm_rewrite:
+            if len(website) == 0 or len(password) == 0:
+                messagebox.showerror(title="Insufficient website and/or password length",
+                                     message="Website and/or password info should not be blank")
             else:
-                data.update(new_data)
-                with open("saved_passwords.json", "w") as data_file:
-                    json.dump(data, data_file, indent=4)
-            finally:
-                messagebox.showinfo(title="Success",
-                                    message=f"Entry for {website} successfully saved.")
+                is_ok = messagebox.askokcancel(
+                    title=website, message=f"There are the details entered:\nEmail: {email}\nPassword: {password}\nClick Ok to confirm your entry.")
+                if is_ok:
+                    try:
+                        with open("saved_passwords.json", "r") as data_file:
+                            data = json.load(data_file)
+                    except FileNotFoundError:
+                        with open("saved_passwords.json", "w") as data_file:
+                            json.dump(new_data, data_file, indent=4)
+                    else:
+                        data.update(new_data)
+                        with open("saved_passwords.json", "w") as data_file:
+                            json.dump(data, data_file, indent=4)
+                    finally:
+                        messagebox.showinfo(title="Success",
+                                            message=f"Entry for {website} successfully saved.")
 
-                website_input.delete(0, "end")
-                email_input.delete(0, "end")
-                password_input.delete(0, "end")
+                        website_input.delete(0, "end")
+                        email_input.delete(0, "end")
+                        password_input.delete(0, "end")
+        else:
+            messagebox.showinfo(title="Entry Remains Unchanged",
+                                message=f"The entry info for {website} has not been modified")
 
 # ---------------------------- SEARCH FUNCTION ------------------------------- #
 
@@ -110,50 +122,57 @@ def quick_search(query):
         if not website_found:
             messagebox.showinfo(title="Not Found",
                                 message="So such entry found.")
+            return website_found
+        else:
+            return {
+                'data': data,
+                'entry_exists': True
+            }
 
 
 # ---------------------------- UI SETUP ------------------------------- #
-window = Tk()
-window.title("Password Generator & Manager")
-window.config(padx=50, pady=50, bg="white")
+ui_init = UserInterface(save_password, password_gen, search_password)
+# window = Tk()
+# window.title("Password Generator & Manager")
+# window.config(padx=50, pady=50, bg="white")
 
-canvas = Canvas(width=200, height=200, bg="white", highlightthickness=0)
-app_image = PhotoImage(file="logo.png")
-canvas.create_image(100, 100, image=app_image)
-canvas.grid(row=0, column=1)
+# canvas = Canvas(width=200, height=200, bg="white", highlightthickness=0)
+# app_image = PhotoImage(file="logo.png")
+# canvas.create_image(100, 100, image=app_image)
+# canvas.grid(row=0, column=1)
 
-# --------------LABELS--------------------#
-website_label = Label(text="Website:", bg="white")
-website_label.grid(row=1, column=0)
+# # --------------LABELS--------------------#
+# website_label = Label(text="Website:", bg="white")
+# website_label.grid(row=1, column=0)
 
-email_label = Label(text="Email/Username:", bg="white")
-email_label.grid(row=2, column=0)
+# email_label = Label(text="Email/Username:", bg="white")
+# email_label.grid(row=2, column=0)
 
-password_label = Label(text="Password:", bg="white")
-password_label.grid(row=3, column=0)
+# password_label = Label(text="Password:", bg="white")
+# password_label.grid(row=3, column=0)
 
-# --------------INPUTS--------------------#
-website_input = Entry(width=21)
-website_input.focus()
-website_input.grid(row=1, column=1)
+# # --------------INPUTS--------------------#
+# website_input = Entry(width=21)
+# website_input.focus()
+# website_input.grid(row=1, column=1)
 
-email_input = Entry(width=35)
-email_input.insert(0, "email@server.com")
-email_input.grid(row=2, column=1, columnspan=2)
+# email_input = Entry(width=35)
+# email_input.insert(0, "email@server.com")
+# email_input.grid(row=2, column=1, columnspan=2)
 
-password_input = Entry(width=21)
-password_input.grid(row=3, column=1)
+# password_input = Entry(width=21)
+# password_input.grid(row=3, column=1)
 
-# --------------BUTTONS--------------------#
-add_button = Button(text="Add", width=36, command=save_password)
-add_button.grid(row=4, column=1, columnspan=2)
+# # --------------BUTTONS--------------------#
+# add_button = Button(text="Add", width=36, command=save_password)
+# add_button.grid(row=4, column=1, columnspan=2)
 
-generate_button = Button(text="Generate Password",
-                         width=13, command=password_gen)
-generate_button.grid(row=3, column=2, columnspan=2)
+# generate_button = Button(text="Generate Password",
+#                          width=13, command=password_gen)
+# generate_button.grid(row=3, column=2, columnspan=2)
 
-search_button = Button(text="Search", width=13, command=search_password)
-search_button.grid(row=1, column=2, columnspan=2)
+# search_button = Button(text="Search", width=13, command=search_password)
+# search_button.grid(row=1, column=2, columnspan=2)
 
 
-window.mainloop()
+# window.mainloop()
