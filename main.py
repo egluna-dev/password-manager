@@ -3,6 +3,7 @@ from tkinter import messagebox
 import pyperclip
 import json
 import random
+import uuid
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 
@@ -47,11 +48,13 @@ def password_gen(num_letters=4, num_symbols=4, num_numbers=4):
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def create_password():
+    entry_id = str(uuid.uuid4())
     website = website_input.get()
     email = email_input.get()
     password = password_input.get()
     new_data = {
         website: {
+            "id": entry_id,
             "email": email,
             "password": password,
         }}
@@ -130,23 +133,13 @@ def search_password():
 def quick_search(website_query):
     with open("saved_passwords.json", "r") as data_file:
         data = json.load(data_file)
-        if website_query in data:
-            return True
-        # for website in data:
-        #     if query.lower() == website.lower():
-        #         email = data[website]["email"]
-        #         password = data[website]["password"]
-        #         pyperclip.copy(password)
-        #         messagebox.showinfo(
-        #             title="Found Entry", message=f"Information for {website}:\nEmail: {email}\nPassword: {password}.\nPassword saved to clipboard!")
-        #         website_found = True
-        #         break
-        #     else:
-        #         pass
-        # if not website_found:
-        #     messagebox.showinfo(title="Not Found",
-        #                         message="So such entry found.")
-        #     return website_found
+        for value in data:
+            if value.lower() != website_query.lower():
+                messagebox.showwarning(
+                    title="Entry Already Exists", message=f"Entry for {website_query} already exists.")
+                return False
+            else:
+                return True
 
 
 # ---------------------------- UI SETUP ------------------------------- #
