@@ -140,13 +140,13 @@ def quick_search(website_query):
     """
     with open("saved_passwords.json", "r") as data_file:
         data = json.load(data_file)
-        for value in data:
-            if value.lower() != website_query.lower():
-                messagebox.showwarning(
-                    title="Entry Already Exists", message=f"Entry for {website_query} already exists.")
-                return False
-            else:
+        for entry in data.keys():
+            if website_query.lower() == entry.lower():
+                print(
+                    f"WEbsite found:\nQuery: {website_query.lower()}\nEntry: {entry.lower()}")
                 return True
+
+        return False
 
 
 # ---------------------------- UI SETUP ------------------------------- #
