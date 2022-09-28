@@ -105,6 +105,10 @@ def create_password():
 
 
 def search_password():
+    """
+    Searches for entry and loads data if entry exists func(None) -> Bool if not found
+    Displays data in UI and copies password to clipboard.
+    """
     search_query = website_input.get()
     if len(search_query) == 0:
         messagebox.showerror(title="Search Error",
@@ -131,6 +135,9 @@ def search_password():
 
 
 def quick_search(website_query):
+    """
+    Checks if website exists or not func(str) -> Bool
+    """
     with open("saved_passwords.json", "r") as data_file:
         data = json.load(data_file)
         for value in data:
