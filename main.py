@@ -13,7 +13,7 @@ numbers = [str(num) for num in range(10)]
 symbols = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ")", "+"]
 
 
-def password_gen(num_letters=4, num_symbols=4, num_numbers=4):
+def password_gen(num_letters=6, num_symbols=6, num_numbers=4):
     letter_list = []
     symbol_list = []
     number_list = []
